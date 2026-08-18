@@ -17,15 +17,18 @@ function doPost(e) {
     lock.waitLock(10000);
     const payload = JSON.parse((e && e.postData && e.postData.contents) || '{}');
 
-    // Campo invisível usado como honeypot anti-bot.
     if (payload.website) return jsonResponse({ ok: true });
 
     const nome = String(payload.nome || '').trim().replace(/\s+/g, ' ');
     const acompanhantes = clampInt(payload.acompanhantes, 0, 20);
-    const criancas = clampInt(payload.criancas, 0, 20);
+    const criancas = clampInt(payload.criancas, 0, acompanhantes);
+    const total = 1 + acompanhantes;
+    const adultos = total - criancas;
+    const homensAdultos = clampInt(payload.homensAdultos, 0, adultos);
+    const mulheresAdultas = adultos - homensAdultos;
+    const bebemChopp = clampInt(payload.bebemChopp, 0, adultos);
 
     if (nome.length < 2) return jsonResponse({ ok: false, error: 'Nome inválido.' });
-    if (criancas > acompanhantes) return jsonResponse({ ok: false, error: 'Número de crianças inválido.' });
 
     const ss = SpreadsheetApp.openById(SHEET_ID);
     let sheet = ss.getSheetByName(SHEET_NAME);
@@ -33,7 +36,6 @@ function doPost(e) {
 
     ensureHeader(sheet);
 
-    const total = 1 + acompanhantes;
     sheet.appendRow([
       new Date(),
       Utilities.getUuid(),
@@ -42,10 +44,23 @@ function doPost(e) {
       criancas,
       total,
       String(payload.origem || ''),
-      String(payload.enviadoEm || '')
+      String(payload.enviadoEm || ''),
+      homensAdultos,
+      mulheresAdultas,
+      bebemChopp
     ]);
 
-    return jsonResponse({ ok: true, nome, acompanhantes, criancas, totalPessoas: total });
+    return jsonResponse({
+      ok: true,
+      nome,
+      acompanhantes,
+      criancas,
+      totalPessoas: total,
+      adultos,
+      homensAdultos,
+      mulheresAdultas,
+      bebemChopp
+    });
   } catch (err) {
     console.error(err);
     return jsonResponse({ ok: false, error: 'Falha ao registrar.' });
@@ -59,8 +74,6 @@ function doGet() {
 }
 
 function ensureHeader(sheet) {
-  if (sheet.getLastRow() > 0) return;
-
   const headers = [[
     'Registrado em',
     'ID',
@@ -69,7 +82,10 @@ function ensureHeader(sheet) {
     'Crianças entre acompanhantes',
     'Total de pessoas',
     'Origem',
-    'Enviado pelo navegador em'
+    'Enviado pelo navegador em',
+    'Homens adultos',
+    'Mulheres adultas',
+    'Bebem chopp'
   ]];
 
   const range = sheet.getRange(1, 1, 1, headers[0].length);
