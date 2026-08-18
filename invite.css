@@ -1,0 +1,35 @@
+.invite-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  width:min(330px,76vw);
+  aspect-ratio:4/5;
+  overflow:hidden;
+  border-radius:20px;
+  padding:28px 18px;
+  text-align:center;
+  color:#073b86;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(255,255,255,.98) 0 41%,rgba(255,250,232,.94) 42% 58%,transparent 59%),
+    linear-gradient(90deg,rgba(18,84,171,.13) 50%,transparent 50%),
+    linear-gradient(rgba(18,84,171,.13) 50%,transparent 50%),
+    #e8f2ff;
+  background-size:auto,30px 30px,30px 30px,auto;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.75);
+}
+.invite-card::before,.invite-card::after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;border:2px solid rgba(232,165,26,.24)}
+.invite-card::before{left:-62px;bottom:-52px;box-shadow:0 0 0 12px rgba(232,165,26,.06)}
+.invite-card::after{right:-65px;top:52px;box-shadow:0 0 0 12px rgba(11,74,160,.05)}
+.mini-bunting{position:absolute;top:0;left:10px;right:10px;height:54px;display:flex;justify-content:space-around;align-items:flex-start;border-top:2px solid #dfa019}
+.mini-bunting i{display:block;width:28px;height:38px;clip-path:polygon(0 0,100% 0,50% 100%);background:#0b4aa0}
+.mini-bunting i:nth-child(even){background:#f1b52e}
+.mini-bunting i:nth-child(3){background:linear-gradient(45deg,#fff 25%,#0b4aa0 25% 50%,#fff 50% 75%,#0b4aa0 75%);background-size:12px 12px}
+.invite-stars{position:absolute;top:64px;color:#e8a51a;letter-spacing:.4em;text-shadow:0 0 10px rgba(255,216,117,.8)}
+.invite-crown{margin-top:28px;color:#e8a51a;font-size:2.4rem;line-height:1}
+.invite-small{font-family:"Berkshire Swash",Georgia,serif;font-size:1.6rem;line-height:1.1}
+.invite-card strong{font-family:"Berkshire Swash",Georgia,serif;font-size:clamp(3.4rem,12vw,5.2rem);font-weight:400;line-height:.92;text-shadow:0 2px 0 #fff,0 0 1px #e8a51a}
+.invite-age{margin-top:10px;padding:7px 18px;border-radius:999px;background:#0b4aa0;color:#fff7da;font-weight:900;box-shadow:0 4px 0 #e8a51a}
+.invite-picnic{margin-top:24px;font-size:1.8rem;filter:drop-shadow(0 4px 5px rgba(0,0,0,.12))}
+.invite-date{margin-top:14px;font-size:.78rem;font-weight:900;letter-spacing:.18em;color:#7a5a16}
