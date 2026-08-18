@@ -11,6 +11,7 @@
 
 const SHEET_ID = '1-sVefrkdOoPvH_clSj4s3_bqkxoj5MmgKUlSzRegIDQ';
 const SHEET_NAME = 'Presencas';
+const BEER_CAN_LITERS = 0.35;
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
@@ -34,8 +35,15 @@ function doPost(e) {
 
     const beerRaw = payload.bebemCerveja !== undefined ? payload.bebemCerveja : payload.bebemChopp;
     const bebemCerveja = clampInt(beerRaw, 0, adultos);
-    const consumoCopos = bebemCerveja > 0 ? clampInt(payload.consumoCervejaCopos, 1, 8) : 0;
-    const estimativaLitros = Number((bebemCerveja * consumoCopos * 0.3).toFixed(1));
+
+    // Novo padrão: latinhas de 350 ml por pessoa.
+    // Mantém compatibilidade com o campo antigo consumoCervejaCopos.
+    const consumptionRaw = payload.consumoCervejaLatinhas !== undefined
+      ? payload.consumoCervejaLatinhas
+      : payload.consumoCervejaCopos;
+    const consumoLatinhas = bebemCerveja > 0 ? clampInt(consumptionRaw, 1, 8) : 0;
+    const estimativaLatinhas = bebemCerveja * consumoLatinhas;
+    const estimativaLitros = Number((estimativaLatinhas * BEER_CAN_LITERS).toFixed(2));
 
     // Mantemos a coluna "Acompanhantes" por compatibilidade com registros antigos.
     const acompanhantes = Math.max(0, total - 1);
@@ -57,7 +65,8 @@ function doPost(e) {
       String(payload.enviadoEm || ''),
       adultos,
       bebemCerveja,
-      consumoCopos,
+      consumoLatinhas,
+      estimativaLatinhas,
       estimativaLitros
     ]);
 
@@ -68,7 +77,8 @@ function doPost(e) {
       criancas,
       adultos,
       bebemCerveja,
-      consumoCervejaCopos: consumoCopos,
+      consumoCervejaLatinhas: consumoLatinhas,
+      estimativaCervejaLatinhas: estimativaLatinhas,
       estimativaCervejaLitros: estimativaLitros
     });
   } catch (err) {
@@ -83,7 +93,7 @@ function doGet() {
   return jsonResponse({
     ok: true,
     service: 'Piquenique do Henri RSVP',
-    version: 'wizard-2026-08-17'
+    version: 'wizard-latinhas-350ml-2026-08-17'
   });
 }
 
@@ -99,7 +109,8 @@ function ensureHeader(sheet) {
     'Enviado pelo navegador em',
     'Adultos',
     'Bebem cerveja',
-    'Copos de 300 ml por pessoa',
+    'Latinhas de 350 ml por pessoa',
+    'Estimativa de latinhas 350 ml',
     'Estimativa de cerveja (L)'
   ]];
 
