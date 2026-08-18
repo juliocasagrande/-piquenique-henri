@@ -1,10 +1,12 @@
 /**
- * Backend do Piquenique do Henri.
+ * Backend do Piquenique do Henri — versão Wizard.
  *
- * Planilha já configurada neste arquivo.
- * No Apps Script, implante como Aplicativo da Web, execute como você
- * e permita acesso para qualquer pessoa. Depois copie a URL /exec
- * para o config.js do site.
+ * COMO ATUALIZAR NO GOOGLE APPS SCRIPT
+ * 1. Substitua todo o conteúdo do Code.gs por este arquivo.
+ * 2. Salve.
+ * 3. Vá em Implantar > Gerenciar implantações.
+ * 4. Edite a implantação atual e selecione "Nova versão".
+ * 5. Implante novamente. A URL /exec permanece a mesma.
  */
 
 const SHEET_ID = '1-sVefrkdOoPvH_clSj4s3_bqkxoj5MmgKUlSzRegIDQ';
@@ -17,18 +19,26 @@ function doPost(e) {
     lock.waitLock(10000);
     const payload = JSON.parse((e && e.postData && e.postData.contents) || '{}');
 
+    // Honeypot anti-bot.
     if (payload.website) return jsonResponse({ ok: true });
 
     const nome = String(payload.nome || '').trim().replace(/\s+/g, ' ');
-    const acompanhantes = clampInt(payload.acompanhantes, 0, 20);
-    const criancas = clampInt(payload.criancas, 0, acompanhantes);
-    const total = 1 + acompanhantes;
-    const adultos = total - criancas;
-    const homensAdultos = clampInt(payload.homensAdultos, 0, adultos);
-    const mulheresAdultas = adultos - homensAdultos;
-    const bebemChopp = clampInt(payload.bebemChopp, 0, adultos);
-
     if (nome.length < 2) return jsonResponse({ ok: false, error: 'Nome inválido.' });
+
+    // Aceita tanto o novo wizard quanto versões antigas do site.
+    const legacyAcompanhantes = clampInt(payload.acompanhantes, 0, 29);
+    const totalInformado = clampInt(payload.totalPessoas, 0, 30);
+    const total = totalInformado >= 1 ? totalInformado : 1 + legacyAcompanhantes;
+    const criancas = clampInt(payload.criancas, 0, total);
+    const adultos = Math.max(0, total - criancas);
+
+    const beerRaw = payload.bebemCerveja !== undefined ? payload.bebemCerveja : payload.bebemChopp;
+    const bebemCerveja = clampInt(beerRaw, 0, adultos);
+    const consumoCopos = bebemCerveja > 0 ? clampInt(payload.consumoCervejaCopos, 1, 8) : 0;
+    const estimativaLitros = Number((bebemCerveja * consumoCopos * 0.3).toFixed(1));
+
+    // Mantemos a coluna "Acompanhantes" por compatibilidade com registros antigos.
+    const acompanhantes = Math.max(0, total - 1);
 
     const ss = SpreadsheetApp.openById(SHEET_ID);
     let sheet = ss.getSheetByName(SHEET_NAME);
@@ -45,21 +55,21 @@ function doPost(e) {
       total,
       String(payload.origem || ''),
       String(payload.enviadoEm || ''),
-      homensAdultos,
-      mulheresAdultas,
-      bebemChopp
+      adultos,
+      bebemCerveja,
+      consumoCopos,
+      estimativaLitros
     ]);
 
     return jsonResponse({
       ok: true,
       nome,
-      acompanhantes,
-      criancas,
       totalPessoas: total,
+      criancas,
       adultos,
-      homensAdultos,
-      mulheresAdultas,
-      bebemChopp
+      bebemCerveja,
+      consumoCervejaCopos: consumoCopos,
+      estimativaCervejaLitros: estimativaLitros
     });
   } catch (err) {
     console.error(err);
@@ -70,7 +80,11 @@ function doPost(e) {
 }
 
 function doGet() {
-  return jsonResponse({ ok: true, service: 'Piquenique do Henri RSVP' });
+  return jsonResponse({
+    ok: true,
+    service: 'Piquenique do Henri RSVP',
+    version: 'wizard-2026-08-17'
+  });
 }
 
 function ensureHeader(sheet) {
@@ -78,14 +92,15 @@ function ensureHeader(sheet) {
     'Registrado em',
     'ID',
     'Nome',
-    'Acompanhantes',
-    'Crianças entre acompanhantes',
+    'Acompanhantes (legado)',
+    'Crianças',
     'Total de pessoas',
     'Origem',
     'Enviado pelo navegador em',
-    'Homens adultos',
-    'Mulheres adultas',
-    'Bebem chopp'
+    'Adultos',
+    'Bebem cerveja',
+    'Copos de 300 ml por pessoa',
+    'Estimativa de cerveja (L)'
   ]];
 
   const range = sheet.getRange(1, 1, 1, headers[0].length);
