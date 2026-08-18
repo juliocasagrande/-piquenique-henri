@@ -12,31 +12,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260817-2347" />
-  <link rel="stylesheet" href="invite.css?v=20260817-2347" />
-  <link rel="stylesheet" href="wizard.css?v=20260817-2347" />
+  <link rel="stylesheet" href="styles.css?v=20260818-0742" />
+  <link rel="stylesheet" href="invite.css?v=20260818-0742" />
+  <link rel="stylesheet" href="wizard.css?v=20260818-0742" />
 </head>
 <body>
   <canvas id="confetti" aria-hidden="true"></canvas>
-
   <div class="sky-decoration" aria-hidden="true">
     <span class="sparkle s1">✦</span><span class="sparkle s2">✧</span><span class="sparkle s3">✦</span><span class="sparkle s4">✧</span>
     <span class="balloon balloon-blue"></span><span class="balloon balloon-gold"></span>
   </div>
-
   <main class="page-shell">
-    <section class="hero-card" aria-labelledby="titulo-festa">
+    <section class="hero-card" aria-label="Informações do Piquenique do Henri">
       <div class="hero-copy">
         <div class="eyebrow">Você é nosso convidado</div>
-
         <p class="subtitle">Uma tarde mágica para comemorar seus 2 anos.</p>
-
         <div class="event-grid" aria-label="Informações da festa">
           <article class="event-item"><span class="event-icon">📅</span><div><span class="event-label">Data</span><strong>24 de outubro de 2026</strong></div></article>
           <article class="event-item"><span class="event-icon">🕒</span><div><span class="event-label">Horário</span><strong>15h</strong></div></article>
           <article class="event-item event-item-wide"><span class="event-icon">📍</span><div><span class="event-label">Local</span><strong>Salão de Festas — Condomínio Recanto das Palmeiras</strong></div></article>
         </div>
-
         <div class="countdown" aria-live="polite">
           <span class="countdown-title">Falta pouco para a festa</span>
           <div class="countdown-grid">
@@ -47,7 +42,6 @@
           </div>
         </div>
       </div>
-
       <div class="invite-frame" aria-label="Arte inspirada no convite da festa">
         <div class="invite-card">
           <div class="mini-bunting" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
@@ -61,123 +55,117 @@
         </div>
       </div>
     </section>
-
     <section class="rsvp-card wizard-card" id="confirmar" aria-labelledby="rsvp-title">
-      <div class="rsvp-heading wizard-heading">
-        <span class="mini-crown" aria-hidden="true">♕</span>
-        <div>
-          <p class="eyebrow">Lista de presença</p>
-          <h2 id="rsvp-title">Confirme sua presença</h2>
-          <p>Vamos por partes. São poucas perguntas e, no final, você confere tudo antes de enviar.</p>
+      <header class="wizard-window-header">
+        <div class="wizard-title-row">
+          <span class="wizard-title-icon" aria-hidden="true">♕</span>
+          <div>
+            <p class="eyebrow">Lista de presença</p>
+            <h2 id="rsvp-title">Confirme sua presença</h2>
+            <p class="wizard-subtitle">Preencha uma etapa por vez e confira tudo antes de enviar.</p>
+          </div>
         </div>
-      </div>
-
-      <div class="wizard-progress" aria-label="Progresso do preenchimento">
-        <div class="wizard-progress-bar"><span id="wizardProgressFill"></span></div>
-        <div class="wizard-progress-meta"><strong id="wizardStepLabel">Passo 1 de 5</strong><span id="wizardStepName">Total de pessoas</span></div>
-      </div>
-
+      </header>
+      <nav class="wizard-steps-nav" aria-label="Etapas da confirmação">
+        <div class="wizard-step-dot is-active" data-nav-step="0"><span>1</span><small>Pessoas</small></div>
+        <div class="wizard-step-dot" data-nav-step="1"><span>2</span><small>Crianças</small></div>
+        <div class="wizard-step-dot" data-nav-step="2"><span>3</span><small>Cerveja</small></div>
+        <div class="wizard-step-dot" data-nav-step="3"><span>4</span><small>Espumante</small></div>
+        <div class="wizard-step-dot" data-nav-step="4"><span>5</span><small>Revisão</small></div>
+      </nav>
       <form id="rsvpForm" novalidate>
-        <section class="wizard-step is-active" data-step="0" aria-labelledby="step-total-title">
-          <span class="step-kicker">Primeiro</span>
-          <h3 id="step-total-title">Quantas pessoas vão ao todo?</h3>
-          <p class="step-help">Conte todo mundo: <strong>adultos + crianças</strong>.</p>
-          <div class="big-number-control" aria-label="Total de pessoas">
-            <button type="button" class="stepper wizard-stepper" data-target="totalPessoasInput" data-step="-1" aria-label="Diminuir total de pessoas">−</button>
-            <div class="big-number-value"><input id="totalPessoasInput" type="number" min="1" max="30" value="1" inputmode="numeric" /><span>pessoas</span></div>
-            <button type="button" class="stepper wizard-stepper" data-target="totalPessoasInput" data-step="1" aria-label="Aumentar total de pessoas">+</button>
-          </div>
-          <small class="error" id="totalError"></small>
-        </section>
-
-        <section class="wizard-step" data-step="1" aria-labelledby="step-kids-title" hidden>
-          <span class="step-kicker">Agora as crianças</span>
-          <h3 id="step-kids-title">Do total informado, quantas são crianças?</h3>
-          <p class="step-help">Você informou <strong id="kidsTotalReference">1 pessoa</strong> no total.</p>
-          <div class="big-number-control" aria-label="Quantidade de crianças">
-            <button type="button" class="stepper wizard-stepper" data-target="criancasInput" data-step="-1" aria-label="Diminuir crianças">−</button>
-            <div class="big-number-value"><input id="criancasInput" type="number" min="0" max="1" value="0" inputmode="numeric" /><span>crianças</span></div>
-            <button type="button" class="stepper wizard-stepper" data-target="criancasInput" data-step="1" aria-label="Aumentar crianças">+</button>
-          </div>
-          <div class="step-result-pill">Adultos: <strong id="adultosPreview">1</strong></div>
-          <small class="error" id="criancasError"></small>
-        </section>
-
-        <section class="wizard-step" data-step="2" aria-labelledby="step-beer-title" hidden>
-          <span class="step-kicker">Bebidas</span>
-          <h3 id="step-beer-title">Quantas pessoas bebem cerveja?</h3>
-          <p class="step-help">Considere somente os <strong id="beerAdultsReference">1 adulto</strong> do grupo.</p>
-          <div class="big-number-control beer-number-control" aria-label="Pessoas que bebem cerveja">
-            <button type="button" class="stepper wizard-stepper" data-target="bebemCervejaInput" data-step="-1" aria-label="Diminuir pessoas que bebem cerveja">−</button>
-            <div class="big-number-value"><input id="bebemCervejaInput" type="number" min="0" max="1" value="0" inputmode="numeric" /><span>🍺 bebem</span></div>
-            <button type="button" class="stepper wizard-stepper" data-target="bebemCervejaInput" data-step="1" aria-label="Aumentar pessoas que bebem cerveja">+</button>
-          </div>
-          <small class="error" id="beerError"></small>
-        </section>
-
-        <section class="wizard-step" data-step="3" aria-labelledby="step-consumption-title" hidden>
-          <span class="step-kicker">Só uma estimativa</span>
-          <h3 id="step-consumption-title">Quanto cada pessoa que bebe costuma consumir?</h3>
-          <p class="step-help">Use o controle abaixo pensando em <strong>latinhas de cerveja de 350 ml por pessoa</strong>.</p>
-          <div class="beer-slider-card" id="beerSliderCard">
-            <output id="beerVisual" class="beer-visual" for="consumoCervejaInput">🍺🍺🍺</output>
-            <div class="beer-consumption-number"><strong id="consumoCervejaValue">3</strong><span>latinhas de 350 ml por pessoa</span></div>
-            <input id="consumoCervejaInput" class="beer-slider" type="range" min="1" max="8" step="1" value="3" aria-label="Latinhas de cerveja de 350 ml por pessoa" />
-            <div class="beer-slider-labels"><span>🍺 Pouco</span><span>Bastante 🍺🍺🍺</span></div>
-            <div class="beer-estimate">Estimativa para o grupo: <strong id="beerLitersPreview">0 latinhas</strong></div>
-          </div>
-          <div class="no-beer-message" id="noBeerMessage" hidden>
-            <span aria-hidden="true">🥤</span>
-            <strong>Ninguém do grupo bebe cerveja.</strong>
-            <p>Ótimo, este passo não altera o resumo.</p>
-          </div>
-        </section>
-
-        <section class="wizard-step" data-step="4" aria-labelledby="step-summary-title" hidden>
-          <span class="step-kicker">Confira antes de enviar</span>
-          <h3 id="step-summary-title">Está tudo certo?</h3>
-          <p class="step-help">Informe seu nome e confira o resumo da confirmação.</p>
-          <div class="field summary-name-field">
-            <label for="nome">Seu nome</label>
-            <input id="nome" name="nome" type="text" autocomplete="name" maxlength="100" placeholder="Ex.: Júlio Casagrande" required />
-            <small class="error" id="nomeError"></small>
-          </div>
-          <div class="wizard-summary" aria-live="polite">
-            <div><span>👨‍👩‍👧‍👦 Total</span><strong id="summaryTotal">1 pessoa</strong></div>
-            <div><span>🧒 Crianças</span><strong id="summaryKids">0</strong></div>
-            <div><span>🧑 Adultos</span><strong id="summaryAdults">1</strong></div>
-            <div><span>🍺 Bebem cerveja</span><strong id="summaryBeerPeople">0</strong></div>
-            <div class="summary-wide"><span>🍻 Consumo estimado</span><strong id="summaryBeerConsumption">Não se aplica</strong></div>
-          </div>
-          <div class="final-confirmation-note">Ao confirmar, essas informações serão enviadas para a lista da festa.</div>
-        </section>
-
-        <input class="honeypot" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <div class="wizard-actions">
-          <button class="wizard-back" type="button" id="backBtn" hidden>← Voltar</button>
-          <button class="wizard-next" type="button" id="nextBtn">Continuar →</button>
-          <button class="submit-btn wizard-submit" type="submit" id="submitBtn" hidden><span class="btn-icon">✨</span><span id="submitText">Confirmar e enviar</span></button>
+        <div class="wizard-body">
+          <section class="wizard-step is-active" data-step="0" aria-labelledby="step-total-title">
+            <div class="step-card-header"><div class="step-card-title"><span aria-hidden="true">👨‍👩‍👧‍👦</span><h3 id="step-total-title">Total de pessoas</h3></div><span class="step-count">1/5</span></div>
+            <div class="step-card-content">
+              <label class="question-label" for="totalPessoasInput">Quantas pessoas vão ao todo?</label>
+              <p class="step-help">Conte todos do grupo: adultos + crianças.</p>
+              <div class="big-number-control" aria-label="Total de pessoas">
+                <button type="button" class="stepper wizard-stepper" data-target="totalPessoasInput" data-step="-1" aria-label="Diminuir total de pessoas">−</button>
+                <div class="big-number-value"><input id="totalPessoasInput" type="number" min="1" max="30" value="1" inputmode="numeric" /><span>pessoas</span></div>
+                <button type="button" class="stepper wizard-stepper" data-target="totalPessoasInput" data-step="1" aria-label="Aumentar total de pessoas">+</button>
+              </div>
+              <small class="error" id="totalError"></small>
+            </div>
+          </section>
+          <section class="wizard-step" data-step="1" aria-labelledby="step-kids-title" hidden>
+            <div class="step-card-header"><div class="step-card-title"><span aria-hidden="true">🧒</span><h3 id="step-kids-title">Crianças</h3></div><span class="step-count">2/5</span></div>
+            <div class="step-card-content">
+              <label class="question-label" for="criancasInput">Do total informado, quantas são crianças?</label>
+              <p class="step-help">Seu grupo tem <strong id="kidsTotalReference">1 pessoa</strong> no total.</p>
+              <div class="big-number-control" aria-label="Quantidade de crianças">
+                <button type="button" class="stepper wizard-stepper" data-target="criancasInput" data-step="-1" aria-label="Diminuir crianças">−</button>
+                <div class="big-number-value"><input id="criancasInput" type="number" min="0" max="1" value="0" inputmode="numeric" /><span>crianças</span></div>
+                <button type="button" class="stepper wizard-stepper" data-target="criancasInput" data-step="1" aria-label="Aumentar crianças">+</button>
+              </div>
+              <div class="step-result-pill">Adultos no grupo: <strong id="adultosPreview">1</strong></div>
+              <small class="error" id="criancasError"></small>
+            </div>
+          </section>
+          <section class="wizard-step" data-step="2" aria-labelledby="step-beer-title" hidden>
+            <div class="step-card-header"><div class="step-card-title"><span aria-hidden="true">🍺</span><h3 id="step-beer-title">Cerveja</h3></div><span class="step-count">3/5</span></div>
+            <div class="step-card-content">
+              <label class="question-label" for="bebemCervejaInput">Quantas pessoas bebem cerveja?</label>
+              <p class="step-help">Considere apenas os <strong id="beerAdultsReference">1 adulto</strong> do grupo.</p>
+              <div class="big-number-control drink-number-control" aria-label="Pessoas que bebem cerveja">
+                <button type="button" class="stepper wizard-stepper" data-target="bebemCervejaInput" data-step="-1" aria-label="Diminuir pessoas que bebem cerveja">−</button>
+                <div class="big-number-value"><input id="bebemCervejaInput" type="number" min="0" max="1" value="0" inputmode="numeric" /><span>🍺 pessoas</span></div>
+                <button type="button" class="stepper wizard-stepper" data-target="bebemCervejaInput" data-step="1" aria-label="Aumentar pessoas que bebem cerveja">+</button>
+              </div>
+              <small class="error" id="beerError"></small>
+            </div>
+          </section>
+          <section class="wizard-step" data-step="3" aria-labelledby="step-sparkling-title" hidden>
+            <div class="step-card-header"><div class="step-card-title"><span aria-hidden="true">🥂</span><h3 id="step-sparkling-title">Espumante</h3></div><span class="step-count">4/5</span></div>
+            <div class="step-card-content">
+              <label class="question-label" for="bebemEspumanteInput">Quantas pessoas bebem espumante?</label>
+              <p class="step-help">Considere apenas os <strong id="sparklingAdultsReference">1 adulto</strong> do grupo.</p>
+              <div class="big-number-control sparkling-number-control" aria-label="Pessoas que bebem espumante">
+                <button type="button" class="stepper wizard-stepper" data-target="bebemEspumanteInput" data-step="-1" aria-label="Diminuir pessoas que bebem espumante">−</button>
+                <div class="big-number-value"><input id="bebemEspumanteInput" type="number" min="0" max="1" value="0" inputmode="numeric" /><span>🥂 pessoas</span></div>
+                <button type="button" class="stepper wizard-stepper" data-target="bebemEspumanteInput" data-step="1" aria-label="Aumentar pessoas que bebem espumante">+</button>
+              </div>
+              <small class="error" id="sparklingError"></small>
+            </div>
+          </section>
+          <section class="wizard-step" data-step="4" aria-labelledby="step-summary-title" hidden>
+            <div class="step-card-header"><div class="step-card-title"><span aria-hidden="true">✓</span><h3 id="step-summary-title">Revisão</h3></div><span class="step-count">5/5</span></div>
+            <div class="step-card-content summary-content">
+              <div class="field summary-name-field">
+                <label for="nome">Seu nome</label>
+                <input id="nome" name="nome" type="text" autocomplete="name" maxlength="100" placeholder="Ex.: Júlio Casagrande" required />
+                <small class="error" id="nomeError"></small>
+              </div>
+              <p class="summary-intro">Confira os dados do seu grupo antes de confirmar.</p>
+              <div class="wizard-summary" aria-live="polite">
+                <div><span>👨‍👩‍👧‍👦 Total</span><strong id="summaryTotal">1 pessoa</strong></div>
+                <div><span>🧑 Adultos</span><strong id="summaryAdults">1</strong></div>
+                <div><span>🧒 Crianças</span><strong id="summaryKids">0</strong></div>
+                <div><span>🍺 Bebem cerveja</span><strong id="summaryBeerPeople">0</strong></div>
+                <div><span>🥂 Bebem espumante</span><strong id="summarySparklingPeople">0</strong></div>
+              </div>
+              <div class="final-confirmation-note">Ao confirmar, essas informações serão enviadas para a lista da festa.</div>
+            </div>
+          </section>
         </div>
+        <input class="honeypot" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <footer class="wizard-actions">
+          <button class="wizard-back" type="button" id="backBtn" hidden>← Anterior</button>
+          <button class="wizard-next" type="button" id="nextBtn">Próximo →</button>
+          <button class="submit-btn wizard-submit" type="submit" id="submitBtn" hidden><span class="btn-icon">✨</span><span id="submitText">Confirmar presença</span></button>
+        </footer>
         <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
       </form>
     </section>
-
     <section class="success-card wizard-success" id="successCard" hidden aria-live="polite">
       <div class="success-illustration" role="img" aria-label="Confirmação de presença realizada com sucesso">
         <svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="bgSuccess" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#eaf5ff"/><stop offset="1" stop-color="#fff3c8"/></linearGradient>
-            <linearGradient id="blueSuccess" x1="0" x2="1"><stop stop-color="#0b4aa0"/><stop offset="1" stop-color="#2479d2"/></linearGradient>
-          </defs>
+          <defs><linearGradient id="bgSuccess" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#eaf5ff"/><stop offset="1" stop-color="#fff3c8"/></linearGradient><linearGradient id="blueSuccess" x1="0" x2="1"><stop stop-color="#0b4aa0"/><stop offset="1" stop-color="#2479d2"/></linearGradient></defs>
           <rect x="6" y="6" width="508" height="288" rx="36" fill="url(#bgSuccess)" stroke="#f0c75b" stroke-width="5"/>
-          <path d="M65 50L88 86H42Z" fill="#0b4aa0"/><path d="M105 50L128 86H82Z" fill="#f0b429"/><path d="M145 50L168 86H122Z" fill="#fff" stroke="#0b4aa0"/><path d="M185 50L208 86H162Z" fill="#0b4aa0"/><path d="M225 50L248 86H202Z" fill="#f0b429"/>
-          <path d="M45 48C110 25 185 30 250 48" fill="none" stroke="#d39a1d" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="260" cy="143" r="74" fill="url(#blueSuccess)"/>
-          <path d="M226 143l22 23 48-55" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-          <g transform="translate(62 183)"><rect x="0" y="32" width="95" height="54" rx="12" fill="#a96b20"/><path d="M20 35c4-40 52-40 57 0" fill="none" stroke="#75440f" stroke-width="9"/><path d="M5 49h84M5 66h84" stroke="#e0a751" stroke-width="5"/><circle cx="30" cy="26" r="13" fill="#df3e35"/><circle cx="55" cy="22" r="13" fill="#77a936"/></g>
-          <g transform="translate(390 182)"><ellipse cx="28" cy="37" rx="25" ry="36" fill="#f0b429"/><path d="M28 73v35" stroke="#0b4aa0" stroke-width="3"/><ellipse cx="70" cy="28" rx="23" ry="34" fill="#0b4aa0"/><path d="M70 62v46" stroke="#f0b429" stroke-width="3"/></g>
-          <path d="M325 216c18-21 49-22 66 0v44h-66z" fill="#fff" stroke="#0b4aa0" stroke-width="4"/><path d="M338 216c0-28 40-28 40 0" fill="none" stroke="#0b4aa0" stroke-width="5"/>
-          <circle cx="310" cy="78" r="5" fill="#f0b429"/><circle cx="354" cy="112" r="4" fill="#0b4aa0"/><circle cx="408" cy="91" r="6" fill="#f0b429"/><path d="M341 61l5 12 13 2-10 8 3 13-11-7-11 7 3-13-10-8 13-2z" fill="#f0b429"/>
+          <circle cx="260" cy="138" r="70" fill="url(#blueSuccess)"/><path d="M226 139l22 23 48-55" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+          <g transform="translate(64 188)"><rect x="0" y="28" width="92" height="50" rx="12" fill="#a96b20"/><path d="M20 31c4-38 49-38 54 0" fill="none" stroke="#75440f" stroke-width="8"/><circle cx="29" cy="23" r="12" fill="#df3e35"/><circle cx="54" cy="20" r="12" fill="#77a936"/></g>
+          <g transform="translate(385 180)"><ellipse cx="28" cy="37" rx="25" ry="36" fill="#f0b429"/><path d="M28 73v35" stroke="#0b4aa0" stroke-width="3"/><ellipse cx="70" cy="28" rx="23" ry="34" fill="#0b4aa0"/><path d="M70 62v46" stroke="#f0b429" stroke-width="3"/></g>
+          <path d="M72 52h46l-23 38zM122 52h46l-23 38zM172 52h46l-23 38zM222 52h46l-23 38z" fill="#f0b429"/><circle cx="324" cy="76" r="5" fill="#f0b429"/><circle cx="366" cy="105" r="4" fill="#0b4aa0"/><path d="M343 58l5 12 13 2-10 8 3 13-11-7-11 7 3-13-10-8 13-2z" fill="#f0b429"/>
         </svg>
       </div>
       <p class="eyebrow">Presença registrada</p>
@@ -187,9 +175,8 @@
       <button type="button" class="secondary-btn" id="newResponseBtn">Registrar outra confirmação</button>
     </section>
   </main>
-
   <footer><span>Feito com carinho para os 2 anos do Henri</span><span class="footer-star">✦</span></footer>
-  <script src="config.js?v=20260817-2347"></script>
-  <script src="script.js?v=20260817-2347"></script>
+  <script src="config.js?v=20260818-0742"></script>
+  <script src="script.js?v=20260818-0742"></script>
 </body>
 </html>
