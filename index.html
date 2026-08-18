@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b4aa0" />
+  <meta name="description" content="Confirmação de presença para o Piquenique do Henri — festa de 2 anos." />
+  <title>Piquenique do Henri • Confirmação de presença</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <div class="sky-decoration" aria-hidden="true">
+    <span class="sparkle s1">✦</span><span class="sparkle s2">✧</span><span class="sparkle s3">✦</span><span class="sparkle s4">✧</span>
+    <span class="balloon balloon-blue"></span><span class="balloon balloon-gold"></span>
+  </div>
+
+  <main class="page-shell">
+    <section class="hero-card" aria-labelledby="titulo-festa">
+      <div class="hero-copy">
+        <div class="eyebrow">Você é nosso convidado</div>
+        <h1 id="titulo-festa">Piquenique do Henri</h1>
+        <p class="subtitle">Uma tarde mágica para comemorar seus 2 anos.</p>
+
+        <div class="event-grid" aria-label="Informações da festa">
+          <article class="event-item"><span class="event-icon">📅</span><div><span class="event-label">Data</span><strong>24 de outubro de 2026</strong></div></article>
+          <article class="event-item"><span class="event-icon">🕒</span><div><span class="event-label">Horário</span><strong>15h</strong></div></article>
+          <article class="event-item event-item-wide"><span class="event-icon">📍</span><div><span class="event-label">Local</span><strong>Salão de Festas — Condomínio Recanto das Palmeiras</strong></div></article>
+        </div>
+
+        <div class="countdown" aria-live="polite">
+          <span class="countdown-title">Falta pouco para a festa</span>
+          <div class="countdown-grid">
+            <div><strong id="days">--</strong><span>dias</span></div>
+            <div><strong id="hours">--</strong><span>horas</span></div>
+            <div><strong id="minutes">--</strong><span>min</span></div>
+            <div><strong id="seconds">--</strong><span>seg</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="invite-frame">
+        <img src="assets/convite-henri.jpeg" alt="Convite do Piquenique do Henri, festa de 2 anos" />
+      </div>
+    </section>
+
+    <section class="rsvp-card" id="confirmar" aria-labelledby="rsvp-title">
+      <div class="rsvp-heading">
+        <span class="mini-crown" aria-hidden="true">♕</span>
+        <div><p class="eyebrow">Lista de presença</p><h2 id="rsvp-title">Confirme sua presença</h2><p>Preencha os dados abaixo para ajudar na organização da festa.</p></div>
+      </div>
+
+      <form id="rsvpForm" novalidate>
+        <div class="field field-full">
+          <label for="nome">Seu nome</label>
+          <input id="nome" name="nome" type="text" autocomplete="name" maxlength="100" placeholder="Ex.: Júlio Casagrande" required />
+          <small class="error" id="nomeError"></small>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="acompanhantes">Quantos acompanhantes?</label>
+            <div class="number-control">
+              <button type="button" class="stepper" data-target="acompanhantes" data-step="-1" aria-label="Diminuir acompanhantes">−</button>
+              <input id="acompanhantes" name="acompanhantes" type="number" inputmode="numeric" min="0" max="20" value="0" required />
+              <button type="button" class="stepper" data-target="acompanhantes" data-step="1" aria-label="Aumentar acompanhantes">+</button>
+            </div>
+            <small>Não conte você neste número.</small>
+          </div>
+
+          <div class="field">
+            <label for="criancas">Desses, quantos são crianças?</label>
+            <div class="number-control">
+              <button type="button" class="stepper" data-target="criancas" data-step="-1" aria-label="Diminuir crianças">−</button>
+              <input id="criancas" name="criancas" type="number" inputmode="numeric" min="0" max="20" value="0" required />
+              <button type="button" class="stepper" data-target="criancas" data-step="1" aria-label="Aumentar crianças">+</button>
+            </div>
+            <small class="error" id="criancasError"></small>
+          </div>
+        </div>
+
+        <div class="attendance-summary" aria-live="polite"><span>Total confirmado</span><strong id="totalPessoas">1 pessoa</strong></div>
+        <input class="honeypot" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <button class="submit-btn" type="submit" id="submitBtn"><span class="btn-icon">✨</span><span id="submitText">Confirmar presença</span></button>
+        <p class="privacy-note">Os dados serão usados apenas para organizar a lista de convidados da festa.</p>
+        <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <section class="success-card" id="successCard" hidden aria-live="polite">
+      <div class="success-icon" aria-hidden="true">✓</div>
+      <p class="eyebrow">Presença registrada</p>
+      <h2>Nos vemos no piquenique!</h2>
+      <p id="successText"></p>
+      <button type="button" class="secondary-btn" id="newResponseBtn">Registrar outra pessoa</button>
+    </section>
+  </main>
+
+  <footer><span>Feito com carinho para os 2 anos do Henri</span><span class="footer-star">✦</span></footer>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
