@@ -31,9 +31,10 @@
   const stepNames = ['Total de pessoas', 'Crianças', 'Quem bebe cerveja', 'Quanto bebe', 'Resumo'];
   let currentStep = 0;
 
+  const BEER_CAN_LITERS = 0.35;
   const clamp = (value, min, max) => Math.min(max, Math.max(min, Number.parseInt(value, 10) || 0));
   const plural = (value, one, many) => `${value} ${value === 1 ? one : many}`;
-  const formatLiters = value => `${value.toFixed(1).replace('.', ',')} L`;
+  const formatLiters = value => `${value.toFixed(2).replace('.', ',')} L`;
 
   function clearErrors() {
     totalError.textContent = '';
@@ -48,9 +49,10 @@
     const criancas = clamp(criancasInput.value, 0, total);
     const adultos = Math.max(0, total - criancas);
     const bebemCerveja = clamp(bebemCervejaInput.value, 0, adultos);
-    const consumoCopos = bebemCerveja > 0 ? clamp(consumoInput.value, 1, 8) : 0;
-    const estimativaLitros = bebemCerveja * consumoCopos * 0.3;
-    return { total, criancas, adultos, bebemCerveja, consumoCopos, estimativaLitros };
+    const consumoLatinhas = bebemCerveja > 0 ? clamp(consumoInput.value, 1, 8) : 0;
+    const estimativaLatinhas = bebemCerveja * consumoLatinhas;
+    const estimativaLitros = estimativaLatinhas * BEER_CAN_LITERS;
+    return { total, criancas, adultos, bebemCerveja, consumoLatinhas, estimativaLatinhas, estimativaLitros };
   }
 
   function syncState() {
@@ -71,17 +73,19 @@
     sliderCard.hidden = state.bebemCerveja === 0;
     noBeerMessage.hidden = state.bebemCerveja !== 0;
 
-    const cups = state.bebemCerveja > 0 ? state.consumoCopos : 0;
-    document.getElementById('consumoCervejaValue').textContent = cups || '0';
-    document.getElementById('beerVisual').textContent = cups > 0 ? '🍺'.repeat(cups) : '🥤';
-    document.getElementById('beerLitersPreview').textContent = formatLiters(state.estimativaLitros);
+    const cans = state.bebemCerveja > 0 ? state.consumoLatinhas : 0;
+    document.getElementById('consumoCervejaValue').textContent = cans || '0';
+    document.getElementById('beerVisual').textContent = cans > 0 ? '🍺'.repeat(cans) : '🥤';
+    document.getElementById('beerLitersPreview').textContent = state.bebemCerveja > 0
+      ? `${plural(state.estimativaLatinhas, 'latinha', 'latinhas')} • ${formatLiters(state.estimativaLitros)}`
+      : '0 latinhas';
 
     document.getElementById('summaryTotal').textContent = plural(state.total, 'pessoa', 'pessoas');
     document.getElementById('summaryKids').textContent = state.criancas;
     document.getElementById('summaryAdults').textContent = state.adultos;
     document.getElementById('summaryBeerPeople').textContent = state.bebemCerveja;
     document.getElementById('summaryBeerConsumption').textContent = state.bebemCerveja > 0
-      ? `${state.consumoCopos} ${state.consumoCopos === 1 ? 'copo' : 'copos'} por pessoa • ${formatLiters(state.estimativaLitros)} no grupo`
+      ? `${state.consumoLatinhas} ${state.consumoLatinhas === 1 ? 'latinha' : 'latinhas'} por pessoa • ${state.estimativaLatinhas} no grupo (${formatLiters(state.estimativaLitros)})`
       : 'Não se aplica';
 
     return state;
@@ -195,12 +199,14 @@
       criancas: state.criancas,
       adultos: state.adultos,
       bebemCerveja: state.bebemCerveja,
-      consumoCervejaCopos: state.consumoCopos,
-      estimativaCervejaLitros: Number(state.estimativaLitros.toFixed(1)),
+      consumoCervejaLatinhas: state.consumoLatinhas,
+      estimativaCervejaLatinhas: state.estimativaLatinhas,
+      estimativaCervejaLitros: Number(state.estimativaLitros.toFixed(2)),
 
       // Compatibilidade temporária com versões antigas do Apps Script.
       acompanhantes: Math.max(0, state.total - 1),
       bebemChopp: state.bebemCerveja,
+      consumoCervejaCopos: state.consumoLatinhas,
 
       origem: window.location.href,
       enviadoEm: new Date().toISOString(),
@@ -226,7 +232,9 @@
         `🧑 ${plural(payload.adultos, 'adulto', 'adultos')}`,
         `🍺 ${plural(payload.bebemCerveja, 'pessoa bebe', 'pessoas bebem')}`
       ];
-      if (payload.bebemCerveja > 0) recap.push(`🍻 ~${formatLiters(payload.estimativaCervejaLitros)} estimados`);
+      if (payload.bebemCerveja > 0) {
+        recap.push(`🍻 ~${plural(payload.estimativaCervejaLatinhas, 'latinha de 350 ml', 'latinhas de 350 ml')} (${formatLiters(payload.estimativaCervejaLitros)})`);
+      }
       successRecap.innerHTML = recap.map(item => `<span>${item}</span>`).join('');
 
       rsvpCard.hidden = true;
