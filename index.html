@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260817-2208" />
-  <link rel="stylesheet" href="invite.css?v=20260817-2208" />
+  <link rel="stylesheet" href="styles.css?v=20260817-2217" />
+  <link rel="stylesheet" href="invite.css?v=20260817-2217" />
 </head>
 <body>
   <canvas id="confetti" aria-hidden="true"></canvas>
@@ -96,6 +96,30 @@
           </div>
         </div>
 
+        <div class="form-grid">
+          <div class="field">
+            <label for="homensAdultos">Dos adultos, quantos são homens?</label>
+            <div class="number-control">
+              <button type="button" class="stepper" data-target="homensAdultos" data-step="-1" aria-label="Diminuir homens adultos">−</button>
+              <input id="homensAdultos" name="homensAdultos" type="number" inputmode="numeric" min="0" max="1" value="0" required />
+              <button type="button" class="stepper" data-target="homensAdultos" data-step="1" aria-label="Aumentar homens adultos">+</button>
+            </div>
+            <small id="adultosResumo">Adultos confirmados: 1. Mulheres serão calculadas automaticamente.</small>
+            <small class="error" id="homensError"></small>
+          </div>
+
+          <div class="field">
+            <label for="bebemChopp">Quantos adultos bebem chopp?</label>
+            <div class="number-control">
+              <button type="button" class="stepper" data-target="bebemChopp" data-step="-1" aria-label="Diminuir adultos que bebem chopp">−</button>
+              <input id="bebemChopp" name="bebemChopp" type="number" inputmode="numeric" min="0" max="1" value="0" required />
+              <button type="button" class="stepper" data-target="bebemChopp" data-step="1" aria-label="Aumentar adultos que bebem chopp">+</button>
+            </div>
+            <small>Conte você também, caso beba.</small>
+            <small class="error" id="choppError"></small>
+          </div>
+        </div>
+
         <div class="attendance-summary" aria-live="polite"><span>Total confirmado</span><strong id="totalPessoas">1 pessoa</strong></div>
         <input class="honeypot" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
@@ -115,7 +139,7 @@
   </main>
 
   <footer><span>Feito com carinho para os 2 anos do Henri</span><span class="footer-star">✦</span></footer>
-  <script src="config.js?v=20260817-2208"></script>
-  <script src="script.js?v=20260817-2208"></script>
+  <script src="config.js?v=20260817-2217"></script>
+  <script src="script.js?v=20260817-2217"></script>
 </body>
 </html>
