@@ -1,14 +1,13 @@
 /**
  * Backend do Piquenique do Henri.
  *
- * 1. Crie uma planilha no Google Sheets.
- * 2. Copie o ID da planilha e substitua SHEET_ID.
- * 3. No Apps Script, implante como Aplicativo da Web.
- * 4. Execute como você e permita acesso para qualquer pessoa.
- * 5. Copie a URL /exec para config.js.
+ * Planilha já configurada neste arquivo.
+ * No Apps Script, implante como Aplicativo da Web, execute como você
+ * e permita acesso para qualquer pessoa. Depois copie a URL /exec
+ * para o config.js do site.
  */
 
-const SHEET_ID = 'COLE_AQUI_O_ID_DA_PLANILHA';
+const SHEET_ID = '1-sVefrkdOoPvH_clSj4s3_bqkxoj5MmgKUlSzRegIDQ';
 const SHEET_NAME = 'Presencas';
 
 function doPost(e) {
