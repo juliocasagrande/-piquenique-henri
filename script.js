@@ -4,8 +4,13 @@
   const nome = document.getElementById('nome');
   const acompanhantes = document.getElementById('acompanhantes');
   const criancas = document.getElementById('criancas');
+  const homensAdultos = document.getElementById('homensAdultos');
+  const bebemChopp = document.getElementById('bebemChopp');
   const nomeError = document.getElementById('nomeError');
   const criancasError = document.getElementById('criancasError');
+  const homensError = document.getElementById('homensError');
+  const choppError = document.getElementById('choppError');
+  const adultosResumo = document.getElementById('adultosResumo');
   const totalPessoas = document.getElementById('totalPessoas');
   const submitBtn = document.getElementById('submitBtn');
   const submitText = document.getElementById('submitText');
@@ -20,6 +25,8 @@
   function clearErrors() {
     nomeError.textContent = '';
     criancasError.textContent = '';
+    homensError.textContent = '';
+    choppError.textContent = '';
     statusMessage.textContent = '';
   }
 
@@ -27,10 +34,23 @@
     const a = clamp(acompanhantes.value, 0, 20);
     let c = clamp(criancas.value, 0, 20);
     if (c > a) c = a;
+
+    const total = a + 1;
+    const adultos = total - c;
+
+    let h = clamp(homensAdultos.value, 0, adultos);
+    let ch = clamp(bebemChopp.value, 0, adultos);
+
     acompanhantes.value = a;
     criancas.value = c;
     criancas.max = a;
-    const total = a + 1;
+    homensAdultos.max = adultos;
+    bebemChopp.max = adultos;
+    homensAdultos.value = h;
+    bebemChopp.value = ch;
+
+    const mulheres = adultos - h;
+    adultosResumo.textContent = `Adultos confirmados: ${adultos}. Mulheres: ${mulheres}.`;
     totalPessoas.textContent = `${total} ${total === 1 ? 'pessoa' : 'pessoas'}`;
   }
 
@@ -44,8 +64,7 @@
     });
   });
 
-  acompanhantes.addEventListener('input', normalizeCounters);
-  criancas.addEventListener('input', normalizeCounters);
+  [acompanhantes, criancas, homensAdultos, bebemChopp].forEach(input => input.addEventListener('input', normalizeCounters));
   normalizeCounters();
 
   function validate() {
@@ -54,6 +73,10 @@
     const cleanName = nome.value.trim().replace(/\s+/g, ' ');
     const a = clamp(acompanhantes.value, 0, 20);
     const c = clamp(criancas.value, 0, 20);
+    const total = a + 1;
+    const adultos = total - c;
+    const h = clamp(homensAdultos.value, 0, 20);
+    const ch = clamp(bebemChopp.value, 0, 20);
 
     if (cleanName.length < 2) {
       nomeError.textContent = 'Informe seu nome para confirmar a presença.';
@@ -65,12 +88,22 @@
       valid = false;
     }
 
-    return { valid, cleanName, a, c };
+    if (h > adultos) {
+      homensError.textContent = 'O número de homens não pode ser maior que o total de adultos.';
+      valid = false;
+    }
+
+    if (ch > adultos) {
+      choppError.textContent = 'O número de pessoas que bebem chopp não pode ser maior que o total de adultos.';
+      valid = false;
+    }
+
+    return { valid, cleanName, a, c, total, adultos, h, ch, mulheres: adultos - h };
   }
 
   form.addEventListener('submit', async event => {
     event.preventDefault();
-    const { valid, cleanName, a, c } = validate();
+    const { valid, cleanName, a, c, total, adultos, h, ch, mulheres } = validate();
     if (!valid) return;
 
     if (document.getElementById('website').value) return;
@@ -85,7 +118,11 @@
       nome: cleanName,
       acompanhantes: a,
       criancas: c,
-      totalPessoas: a + 1,
+      totalPessoas: total,
+      adultos,
+      homensAdultos: h,
+      mulheresAdultas: mulheres,
+      bebemChopp: ch,
       origem: window.location.href,
       enviadoEm: new Date().toISOString(),
       website: ''
@@ -95,7 +132,6 @@
     submitText.textContent = 'Registrando...';
 
     try {
-      // no-cors evita bloqueios do navegador ao usar Google Apps Script a partir do GitHub Pages.
       await fetch(endpoint, {
         method: 'POST',
         mode: 'no-cors',
@@ -103,7 +139,7 @@
         body: JSON.stringify(payload)
       });
 
-      successText.textContent = `${payload.nome}: ${payload.totalPessoas} ${payload.totalPessoas === 1 ? 'pessoa confirmada' : 'pessoas confirmadas'}, sendo ${payload.criancas} ${payload.criancas === 1 ? 'criança' : 'crianças'} entre os acompanhantes.`;
+      successText.textContent = `${payload.nome}: ${payload.totalPessoas} ${payload.totalPessoas === 1 ? 'pessoa confirmada' : 'pessoas confirmadas'}, com ${payload.criancas} ${payload.criancas === 1 ? 'criança' : 'crianças'}, ${payload.homensAdultos} ${payload.homensAdultos === 1 ? 'homem adulto' : 'homens adultos'}, ${payload.mulheresAdultas} ${payload.mulheresAdultas === 1 ? 'mulher adulta' : 'mulheres adultas'} e ${payload.bebemChopp} ${payload.bebemChopp === 1 ? 'adulto que bebe chopp' : 'adultos que bebem chopp'}.`;
       rsvpCard.hidden = true;
       successCard.hidden = false;
       successCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -111,6 +147,8 @@
       form.reset();
       acompanhantes.value = 0;
       criancas.value = 0;
+      homensAdultos.value = 0;
+      bebemChopp.value = 0;
       normalizeCounters();
     } catch (error) {
       console.error(error);
