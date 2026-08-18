@@ -1,0 +1,86 @@
+.wizard-card{overflow:hidden}
+.wizard-heading{margin-bottom:18px}
+.wizard-progress{margin:0 0 28px;padding:16px 18px;border-radius:18px;background:linear-gradient(135deg,#edf5ff,#fff8df);border:1px solid rgba(11,74,160,.12)}
+.wizard-progress-bar{height:9px;border-radius:999px;background:#dce9f8;overflow:hidden}
+.wizard-progress-bar span{display:block;width:20%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--blue-900),var(--blue-700),var(--gold));transition:width .35s ease}
+.wizard-progress-meta{display:flex;justify-content:space-between;gap:16px;margin-top:9px;color:var(--muted);font-size:.82rem;font-weight:800}
+.wizard-progress-meta strong{color:var(--blue-900)}
+
+.wizard-step{min-height:390px;padding:clamp(18px,3vw,30px);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(240,247,255,.92));border:1px solid #dbe7f4;animation:wizardIn .28s ease both}
+.wizard-step[hidden]{display:none!important}
+.step-kicker{display:inline-flex;margin-bottom:9px;padding:6px 10px;border-radius:999px;background:#fff1bd;color:#9d6c00;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.wizard-step h3{max-width:760px;margin:0 auto 8px;text-align:center;color:var(--blue-950);font-size:clamp(1.65rem,4vw,2.65rem);line-height:1.08;text-wrap:balance}
+.step-help{max-width:720px;margin:0 auto 28px;text-align:center;color:var(--muted);font-size:1rem;font-weight:700;line-height:1.55}
+.wizard-step>.error{display:block;max-width:650px;margin:10px auto 0;text-align:center;min-height:20px}
+
+.big-number-control{display:grid;grid-template-columns:72px minmax(180px,300px) 72px;justify-content:center;overflow:hidden;width:min(100%,460px);margin:22px auto 14px;border:2px solid #b9cfea;border-radius:24px;background:#fff;box-shadow:0 16px 38px rgba(11,74,160,.09)}
+.big-number-control .stepper{min-height:112px;font-size:2.15rem;background:#edf5ff}
+.big-number-value{display:grid;place-items:center;align-content:center;gap:2px;border-left:1px solid #d9e5f3;border-right:1px solid #d9e5f3;background:#fff}
+.big-number-value input{width:100%;height:62px;border:0;outline:0;background:transparent;color:var(--blue-900);font:900 3.1rem/1 "Nunito",sans-serif;text-align:center;appearance:textfield}
+.big-number-value input::-webkit-inner-spin-button,.big-number-value input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.big-number-value span{color:var(--muted);font-size:.86rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.beer-number-control{border-color:#e4bd57}
+.beer-number-control .stepper{background:#fff4cd}
+
+.step-result-pill{width:max-content;max-width:100%;margin:16px auto 0;padding:10px 16px;border-radius:999px;background:#eaf4ff;color:var(--blue-900);font-weight:800}
+.step-result-pill strong{font-size:1.15rem}
+
+.beer-slider-card{max-width:700px;margin:10px auto 0;padding:24px;border-radius:24px;background:linear-gradient(145deg,#fffaf0,#fff1bd);border:1px solid #e8c766;box-shadow:0 16px 34px rgba(146,101,0,.10);text-align:center}
+.beer-visual{display:block;min-height:48px;margin-bottom:6px;font-size:clamp(1.8rem,5vw,3rem);letter-spacing:.05em;overflow:hidden;white-space:nowrap}
+.beer-consumption-number{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:18px;color:#7b5600}
+.beer-consumption-number strong{font-size:2.3rem}
+.beer-consumption-number span{font-weight:900}
+.beer-slider{width:100%;height:12px;accent-color:#d99500;cursor:pointer}
+.beer-slider-labels{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#856317;font-size:.78rem;font-weight:800}
+.beer-estimate{margin-top:18px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.7);color:#6e550d;font-weight:800}
+.beer-estimate strong{color:#5f4300;font-size:1.15rem}
+.no-beer-message{max-width:620px;margin:28px auto 0;padding:26px;border-radius:22px;background:#eef7ff;border:1px dashed #9fc0e6;text-align:center;color:var(--blue-900)}
+.no-beer-message>span{display:block;margin-bottom:6px;font-size:3rem}
+.no-beer-message strong{font-size:1.2rem}
+.no-beer-message p{margin:6px 0 0;color:var(--muted)}
+
+.summary-name-field{max-width:620px;margin:0 auto 20px}
+.wizard-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px;margin:0 auto}
+.wizard-summary>div{display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:68px;padding:15px 17px;border-radius:16px;background:#fff;border:1px solid #dbe7f4}
+.wizard-summary span{color:var(--muted);font-weight:800}
+.wizard-summary strong{color:var(--blue-900);font-size:1.05rem;text-align:right}
+.wizard-summary .summary-wide{grid-column:1/-1;background:linear-gradient(90deg,#eef6ff,#fff7dc)}
+.final-confirmation-note{max-width:760px;margin:16px auto 0;padding:12px 14px;border-radius:13px;background:#f7f9fc;color:var(--muted);font-size:.82rem;font-weight:700;text-align:center}
+
+.wizard-actions{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:18px}
+.wizard-back,.wizard-next{min-height:54px;padding:0 22px;border-radius:15px;font:inherit;font-weight:900;cursor:pointer;transition:.2s ease}
+.wizard-back{margin-right:auto;color:var(--blue-900);background:#edf5ff;border:1px solid #bfd2ea}
+.wizard-next{color:#fff;background:linear-gradient(135deg,var(--blue-900),var(--blue-700));border:0;box-shadow:0 12px 26px rgba(11,74,160,.20)}
+.wizard-back:hover,.wizard-next:hover{transform:translateY(-1px)}
+.wizard-submit{min-width:230px}
+
+.wizard-success{padding:34px clamp(18px,4vw,42px) 42px}
+.success-illustration{max-width:540px;margin:0 auto 20px}
+.success-illustration svg{display:block;width:100%;height:auto;filter:drop-shadow(0 16px 28px rgba(8,54,112,.13))}
+.success-recap{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:700px;margin:0 auto 22px}
+.success-recap span{padding:9px 13px;border-radius:999px;background:#edf5ff;color:var(--blue-900);font-weight:800;border:1px solid #cfe0f3}
+
+@keyframes wizardIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+
+@media(max-width:600px){
+  .wizard-progress{padding:13px 14px;margin-bottom:18px}
+  .wizard-progress-meta{font-size:.74rem}
+  .wizard-step{min-height:360px;padding:18px 12px}
+  .wizard-step h3{font-size:1.65rem}
+  .step-help{margin-bottom:22px;font-size:.92rem}
+  .big-number-control{grid-template-columns:58px minmax(135px,1fr) 58px;border-radius:20px}
+  .big-number-control .stepper{min-height:96px;font-size:1.8rem}
+  .big-number-value input{font-size:2.6rem}
+  .beer-slider-card{padding:18px 14px}
+  .beer-slider-labels{font-size:.70rem}
+  .wizard-summary{grid-template-columns:1fr}
+  .wizard-summary .summary-wide{grid-column:auto}
+  .wizard-summary>div{min-height:58px}
+  .wizard-actions{display:grid;grid-template-columns:1fr 1fr}
+  .wizard-back{margin:0}
+  .wizard-next,.wizard-back,.wizard-submit{width:100%;padding:0 12px}
+  .wizard-submit{grid-column:2}
+  .success-illustration{margin-top:-8px}
+}
+
+@media(prefers-reduced-motion:reduce){.wizard-step{animation:none}.wizard-progress-bar span{transition:none}}
