@@ -1,135 +1,215 @@
 (() => {
   const config = window.RSVP_CONFIG || {};
   const form = document.getElementById('rsvpForm');
+  const steps = [...document.querySelectorAll('.wizard-step')];
+  const totalInput = document.getElementById('totalPessoasInput');
+  const criancasInput = document.getElementById('criancasInput');
+  const bebemCervejaInput = document.getElementById('bebemCervejaInput');
+  const consumoInput = document.getElementById('consumoCervejaInput');
   const nome = document.getElementById('nome');
-  const acompanhantes = document.getElementById('acompanhantes');
-  const criancas = document.getElementById('criancas');
-  const homensAdultos = document.getElementById('homensAdultos');
-  const bebemChopp = document.getElementById('bebemChopp');
-  const nomeError = document.getElementById('nomeError');
+
+  const totalError = document.getElementById('totalError');
   const criancasError = document.getElementById('criancasError');
-  const homensError = document.getElementById('homensError');
-  const choppError = document.getElementById('choppError');
-  const adultosResumo = document.getElementById('adultosResumo');
-  const totalPessoas = document.getElementById('totalPessoas');
+  const beerError = document.getElementById('beerError');
+  const nomeError = document.getElementById('nomeError');
+  const statusMessage = document.getElementById('statusMessage');
+
+  const nextBtn = document.getElementById('nextBtn');
+  const backBtn = document.getElementById('backBtn');
   const submitBtn = document.getElementById('submitBtn');
   const submitText = document.getElementById('submitText');
-  const statusMessage = document.getElementById('statusMessage');
+  const progressFill = document.getElementById('wizardProgressFill');
+  const stepLabel = document.getElementById('wizardStepLabel');
+  const stepName = document.getElementById('wizardStepName');
+
   const rsvpCard = document.getElementById('confirmar');
   const successCard = document.getElementById('successCard');
   const successText = document.getElementById('successText');
+  const successRecap = document.getElementById('successRecap');
   const newResponseBtn = document.getElementById('newResponseBtn');
 
+  const stepNames = ['Total de pessoas', 'Crianças', 'Quem bebe cerveja', 'Quanto bebe', 'Resumo'];
+  let currentStep = 0;
+
   const clamp = (value, min, max) => Math.min(max, Math.max(min, Number.parseInt(value, 10) || 0));
+  const plural = (value, one, many) => `${value} ${value === 1 ? one : many}`;
+  const formatLiters = value => `${value.toFixed(1).replace('.', ',')} L`;
 
   function clearErrors() {
-    nomeError.textContent = '';
+    totalError.textContent = '';
     criancasError.textContent = '';
-    homensError.textContent = '';
-    choppError.textContent = '';
+    beerError.textContent = '';
+    nomeError.textContent = '';
     statusMessage.textContent = '';
   }
 
-  function normalizeCounters() {
-    const a = clamp(acompanhantes.value, 0, 20);
-    let c = clamp(criancas.value, 0, 20);
-    if (c > a) c = a;
-
-    const total = a + 1;
-    const adultos = total - c;
-
-    let h = clamp(homensAdultos.value, 0, adultos);
-    let ch = clamp(bebemChopp.value, 0, adultos);
-
-    acompanhantes.value = a;
-    criancas.value = c;
-    criancas.max = a;
-    homensAdultos.max = adultos;
-    bebemChopp.max = adultos;
-    homensAdultos.value = h;
-    bebemChopp.value = ch;
-
-    const mulheres = adultos - h;
-    adultosResumo.textContent = `Adultos confirmados: ${adultos}. Mulheres: ${mulheres}.`;
-    totalPessoas.textContent = `${total} ${total === 1 ? 'pessoa' : 'pessoas'}`;
+  function getState() {
+    const total = clamp(totalInput.value, 1, 30);
+    const criancas = clamp(criancasInput.value, 0, total);
+    const adultos = Math.max(0, total - criancas);
+    const bebemCerveja = clamp(bebemCervejaInput.value, 0, adultos);
+    const consumoCopos = bebemCerveja > 0 ? clamp(consumoInput.value, 1, 8) : 0;
+    const estimativaLitros = bebemCerveja * consumoCopos * 0.3;
+    return { total, criancas, adultos, bebemCerveja, consumoCopos, estimativaLitros };
   }
 
-  document.querySelectorAll('.stepper').forEach(button => {
+  function syncState() {
+    const state = getState();
+
+    totalInput.value = state.total;
+    criancasInput.max = state.total;
+    criancasInput.value = state.criancas;
+    bebemCervejaInput.max = state.adultos;
+    bebemCervejaInput.value = state.bebemCerveja;
+
+    document.getElementById('kidsTotalReference').textContent = plural(state.total, 'pessoa', 'pessoas');
+    document.getElementById('adultosPreview').textContent = state.adultos;
+    document.getElementById('beerAdultsReference').textContent = plural(state.adultos, 'adulto', 'adultos');
+
+    const sliderCard = document.getElementById('beerSliderCard');
+    const noBeerMessage = document.getElementById('noBeerMessage');
+    sliderCard.hidden = state.bebemCerveja === 0;
+    noBeerMessage.hidden = state.bebemCerveja !== 0;
+
+    const cups = state.bebemCerveja > 0 ? state.consumoCopos : 0;
+    document.getElementById('consumoCervejaValue').textContent = cups || '0';
+    document.getElementById('beerVisual').textContent = cups > 0 ? '🍺'.repeat(cups) : '🥤';
+    document.getElementById('beerLitersPreview').textContent = formatLiters(state.estimativaLitros);
+
+    document.getElementById('summaryTotal').textContent = plural(state.total, 'pessoa', 'pessoas');
+    document.getElementById('summaryKids').textContent = state.criancas;
+    document.getElementById('summaryAdults').textContent = state.adultos;
+    document.getElementById('summaryBeerPeople').textContent = state.bebemCerveja;
+    document.getElementById('summaryBeerConsumption').textContent = state.bebemCerveja > 0
+      ? `${state.consumoCopos} ${state.consumoCopos === 1 ? 'copo' : 'copos'} por pessoa • ${formatLiters(state.estimativaLitros)} no grupo`
+      : 'Não se aplica';
+
+    return state;
+  }
+
+  function validateStep(stepIndex) {
+    clearErrors();
+    const state = syncState();
+
+    if (stepIndex === 0 && (state.total < 1 || state.total > 30)) {
+      totalError.textContent = 'Informe entre 1 e 30 pessoas.';
+      return false;
+    }
+
+    if (stepIndex === 1 && state.criancas > state.total) {
+      criancasError.textContent = 'A quantidade de crianças não pode ser maior que o total de pessoas.';
+      return false;
+    }
+
+    if (stepIndex === 2 && state.bebemCerveja > state.adultos) {
+      beerError.textContent = 'A quantidade de pessoas que bebem cerveja não pode ser maior que a quantidade de adultos.';
+      return false;
+    }
+
+    if (stepIndex === 4) {
+      const cleanName = nome.value.trim().replace(/\s+/g, ' ');
+      if (cleanName.length < 2) {
+        nomeError.textContent = 'Informe seu nome para concluir a confirmação.';
+        nome.focus();
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function showStep(index) {
+    currentStep = Math.max(0, Math.min(steps.length - 1, index));
+    steps.forEach((step, i) => {
+      const active = i === currentStep;
+      step.hidden = !active;
+      step.classList.toggle('is-active', active);
+    });
+
+    const progress = ((currentStep + 1) / steps.length) * 100;
+    progressFill.style.width = `${progress}%`;
+    stepLabel.textContent = `Passo ${currentStep + 1} de ${steps.length}`;
+    stepName.textContent = stepNames[currentStep];
+
+    backBtn.hidden = currentStep === 0;
+    nextBtn.hidden = currentStep === steps.length - 1;
+    submitBtn.hidden = currentStep !== steps.length - 1;
+
+    syncState();
+    clearErrors();
+
+    const focusTarget = currentStep === 0 ? totalInput
+      : currentStep === 1 ? criancasInput
+      : currentStep === 2 ? bebemCervejaInput
+      : currentStep === 3 ? consumoInput
+      : nome;
+    setTimeout(() => focusTarget?.focus({ preventScroll: true }), 120);
+  }
+
+  document.querySelectorAll('.wizard-stepper').forEach(button => {
     button.addEventListener('click', () => {
       const input = document.getElementById(button.dataset.target);
       const step = Number(button.dataset.step || 0);
-      input.value = clamp(Number(input.value) + step, Number(input.min || 0), Number(input.max || 20));
-      normalizeCounters();
+      const min = Number(input.min || 0);
+      const max = Number(input.max || 30);
+      input.value = clamp(Number(input.value) + step, min, max);
+      syncState();
       clearErrors();
     });
   });
 
-  [acompanhantes, criancas, homensAdultos, bebemChopp].forEach(input => input.addEventListener('input', normalizeCounters));
-  normalizeCounters();
+  [totalInput, criancasInput, bebemCervejaInput].forEach(input => {
+    input.addEventListener('input', () => {
+      syncState();
+      clearErrors();
+    });
+    input.addEventListener('change', syncState);
+  });
 
-  function validate() {
-    clearErrors();
-    let valid = true;
-    const cleanName = nome.value.trim().replace(/\s+/g, ' ');
-    const a = clamp(acompanhantes.value, 0, 20);
-    const c = clamp(criancas.value, 0, 20);
-    const total = a + 1;
-    const adultos = total - c;
-    const h = clamp(homensAdultos.value, 0, 20);
-    const ch = clamp(bebemChopp.value, 0, 20);
+  consumoInput.addEventListener('input', syncState);
+  nome.addEventListener('input', () => { nomeError.textContent = ''; statusMessage.textContent = ''; });
 
-    if (cleanName.length < 2) {
-      nomeError.textContent = 'Informe seu nome para confirmar a presença.';
-      valid = false;
-    }
+  nextBtn.addEventListener('click', () => {
+    if (!validateStep(currentStep)) return;
+    showStep(currentStep + 1);
+  });
 
-    if (c > a) {
-      criancasError.textContent = 'O número de crianças não pode ser maior que o de acompanhantes.';
-      valid = false;
-    }
-
-    if (h > adultos) {
-      homensError.textContent = 'O número de homens não pode ser maior que o total de adultos.';
-      valid = false;
-    }
-
-    if (ch > adultos) {
-      choppError.textContent = 'O número de pessoas que bebem chopp não pode ser maior que o total de adultos.';
-      valid = false;
-    }
-
-    return { valid, cleanName, a, c, total, adultos, h, ch, mulheres: adultos - h };
-  }
+  backBtn.addEventListener('click', () => showStep(currentStep - 1));
 
   form.addEventListener('submit', async event => {
     event.preventDefault();
-    const { valid, cleanName, a, c, total, adultos, h, ch, mulheres } = validate();
-    if (!valid) return;
-
+    if (!validateStep(4)) return;
     if (document.getElementById('website').value) return;
 
     const endpoint = String(config.endpoint || '');
     if (!endpoint.startsWith('https://script.google.com/')) {
-      statusMessage.textContent = 'A lista ainda não está conectada à planilha. Configure a URL do Google Apps Script em config.js.';
+      statusMessage.textContent = 'A lista ainda não está conectada à planilha.';
       return;
     }
 
+    const state = syncState();
+    const cleanName = nome.value.trim().replace(/\s+/g, ' ');
     const payload = {
       nome: cleanName,
-      acompanhantes: a,
-      criancas: c,
-      totalPessoas: total,
-      adultos,
-      homensAdultos: h,
-      mulheresAdultas: mulheres,
-      bebemChopp: ch,
+      totalPessoas: state.total,
+      criancas: state.criancas,
+      adultos: state.adultos,
+      bebemCerveja: state.bebemCerveja,
+      consumoCervejaCopos: state.consumoCopos,
+      estimativaCervejaLitros: Number(state.estimativaLitros.toFixed(1)),
+
+      // Compatibilidade temporária com versões antigas do Apps Script.
+      acompanhantes: Math.max(0, state.total - 1),
+      bebemChopp: state.bebemCerveja,
+
       origem: window.location.href,
       enviadoEm: new Date().toISOString(),
       website: ''
     };
 
     submitBtn.disabled = true;
-    submitText.textContent = 'Registrando...';
+    submitText.textContent = 'Enviando...';
+    statusMessage.textContent = '';
 
     try {
       await fetch(endpoint, {
@@ -139,33 +219,44 @@
         body: JSON.stringify(payload)
       });
 
-      successText.textContent = `${payload.nome}: ${payload.totalPessoas} ${payload.totalPessoas === 1 ? 'pessoa confirmada' : 'pessoas confirmadas'}, com ${payload.criancas} ${payload.criancas === 1 ? 'criança' : 'crianças'}, ${payload.homensAdultos} ${payload.homensAdultos === 1 ? 'homem adulto' : 'homens adultos'}, ${payload.mulheresAdultas} ${payload.mulheresAdultas === 1 ? 'mulher adulta' : 'mulheres adultas'} e ${payload.bebemChopp} ${payload.bebemChopp === 1 ? 'adulto que bebe chopp' : 'adultos que bebem chopp'}.`;
+      successText.textContent = `${payload.nome}, recebemos a confirmação do seu grupo.`;
+      const recap = [
+        `👨‍👩‍👧‍👦 ${plural(payload.totalPessoas, 'pessoa', 'pessoas')}`,
+        `🧒 ${plural(payload.criancas, 'criança', 'crianças')}`,
+        `🧑 ${plural(payload.adultos, 'adulto', 'adultos')}`,
+        `🍺 ${plural(payload.bebemCerveja, 'pessoa bebe', 'pessoas bebem')}`
+      ];
+      if (payload.bebemCerveja > 0) recap.push(`🍻 ~${formatLiters(payload.estimativaCervejaLitros)} estimados`);
+      successRecap.innerHTML = recap.map(item => `<span>${item}</span>`).join('');
+
       rsvpCard.hidden = true;
       successCard.hidden = false;
       successCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      launchConfetti(130);
-      form.reset();
-      acompanhantes.value = 0;
-      criancas.value = 0;
-      homensAdultos.value = 0;
-      bebemChopp.value = 0;
-      normalizeCounters();
+      launchConfetti(150);
     } catch (error) {
       console.error(error);
-      statusMessage.textContent = 'Não foi possível registrar agora. Verifique sua conexão e tente novamente.';
+      statusMessage.textContent = 'Não foi possível enviar agora. Verifique sua conexão e tente novamente.';
     } finally {
       submitBtn.disabled = false;
-      submitText.textContent = 'Confirmar presença';
+      submitText.textContent = 'Confirmar e enviar';
     }
   });
 
   newResponseBtn.addEventListener('click', () => {
+    form.reset();
+    totalInput.value = 1;
+    criancasInput.value = 0;
+    bebemCervejaInput.value = 0;
+    consumoInput.value = 3;
+    nome.value = '';
     successCard.hidden = true;
     rsvpCard.hidden = false;
-    clearErrors();
+    showStep(0);
     rsvpCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => nome.focus(), 450);
   });
+
+  syncState();
+  showStep(0);
 
   const eventTime = new Date(config.eventDate || '2026-10-24T15:00:00-03:00').getTime();
   const countdownIds = ['days', 'hours', 'minutes', 'seconds'];
